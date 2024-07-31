@@ -12,10 +12,9 @@ from config import app, db, api
 from models import Quest, Player, PlayerQuest
 
 # Views go here!
-
 @app.route('/')
 def index():
-    return '<h1>Project Server</h1>'
+    return '<h1>OldSchool Runescape Quest Tracker</h1>'
 
 @app.route('/players', methods=["GET"])
 def players_route():
@@ -43,6 +42,33 @@ def get_player(id):
         return make_response(player.to_dict(), 200)
     else:
         return make_response({"error": "Player does not exist"}, 404)
+    
+@app.route('/players', methods=["POST"])
+def create_player():
+    data = request.get_json()
+    name = data.get("name")
+    level = data.get("level")
+
+    try:
+        player = Player(name=name, level=level)
+
+        db.session.add(player)
+        db.session.commit()
+
+        response = make_response(
+            player.to_dict(),
+            201,
+            {"Content-Type": "application/json"}
+        )
+    
+    except:
+        response = make_response(
+            {"errors": "Incorrect Format"},
+            400,
+            {"Content-Type": "application/json"}
+        )
+    
+    return response
 
 @app.route('/quests', methods=["GET"])
 def quests_route():
@@ -62,6 +88,76 @@ def quests_route():
     )
 
     return response
+
+@app.route('/quests/<int:id>', methods=["GET"])
+def get_quest(id):
+    quest = Quest.query.get(id)
+    if quest:
+        return make_response(quest.to_dict(), 200)
+    else:
+        return make_response({"error": "Quest does not exist"})
+
+@app.route('/quests', methods=["POST"])
+def create_quest():
+    data = request.get_json()
+    name = data.get("name")
+    description = data.get("description")
+
+    try:
+        quest = Quest(name=name, description=description)
+
+        db.session.add(quest)
+        db.session.commit()
+
+        response = make_response(
+            quest.to_dict(),
+            201,
+            {"Content-Type": "application/json"}
+        )
+    
+    except:
+        response = make_response(
+            {"errors": "Incorrect Format"},
+            400,
+            {"Content-Type": "application/json"}
+        )
+    
+    return response
+
+# @app.route('/quests', methods=["POST"])
+# def create_player():
+#     data = request.get_json()
+#     name = data.get("name")
+#     description = data.get("description")
+
+#     try:
+#         quest = Quest(name=name, description=description)
+
+#         db.session.add(quest)
+#         db.session.commit()
+
+#         response = make_response(
+#             quest.to_dict(),
+#             201,
+#             {"Content-Type": "application/json"}
+#         )
+    
+#     except ValueError:
+#         response = make_response(
+#             {"errors": ["validation errors"]},
+#             400,
+#             {"Content-Type": "application/json"}
+#         )
+    
+#     return response
+
+
+# @app.route('/players/<int:player_id>/quests/<int:quest_id>', methods=["PATCH"])
+# def update_player_quest_progress(player_id, quest_id):
+#     data = request.get_json()
+#     progress = data.get('progress')
+    
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

@@ -31,7 +31,7 @@ class Player(db.Model, SerializerMixin):
 
     @validates('level')
     def validate_level(self, key, value):
-        if not (3 <= value <= 126):
+        if not (3 <= int(value) <= 126):
             raise ValueError("Player Level must be between 3 and 126")
         return value
     
