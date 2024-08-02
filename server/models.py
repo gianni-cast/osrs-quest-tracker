@@ -52,7 +52,7 @@ class PlayerQuest(db.Model, SerializerMixin):
     serialize_rules = ('-player', '-quest')
 
     @validates('progress')
-    def validate_progress(self, key, value):
+    def validate_progress(self, key, value): 
         if value not in ['Not Started', 'In Progress', 'Completed']:
             raise ValueError("Progress must be: 'Not Started', 'In Progress', or 'Completed'")
         return value 

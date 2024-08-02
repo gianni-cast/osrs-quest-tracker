@@ -37,18 +37,15 @@ with app.app_context():
 
     print("Creating PlayerQuest...")
 
-    pq1 = PlayerQuest(player = player_1, progress = "Not Started", quest = quest_1)
-    pq2 = PlayerQuest(player = player_2, progress = "Not Started", quest = quest_2)
-    pq3 = PlayerQuest(player = player_3, progress = "Not Started", quest = quest_3)
-    pq4 = PlayerQuest(player = player_4, progress = "Not Started", quest = quest_4)
-    pq5 = PlayerQuest(player = player_5, progress = "Not Started", quest = quest_5)
-    playerQuests = [pq1, pq2, pq3, pq4, pq5]
+    player_quests = []
+    for player in players:
+        for quest in quests:
+            player_quests.append(PlayerQuest(player=player, quest=quest, progress="Not Started"))
+
     db.session.add_all(players)
     db.session.add_all(quests)
-    db.session.add_all(playerQuests)
+    db.session.add_all(player_quests)
     db.session.commit()
-
-
 
     print("Seeding done!")
 
